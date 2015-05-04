@@ -27,7 +27,7 @@ of suggested timings.
     );
     say "Warm oven up to $temperature degrees first.";
     for my $step (@steps) {
-        say "Put $step->{name} in the oven, and wait for $step->{time_to_next}";
+        say "Put $step->{name} in the oven, and wait for $step->{time_until_next}";
     }
 
     # You can also feed the result of adjust_times to summarise_instructions to
@@ -136,16 +136,18 @@ joined with newlines if called in scalar context.
 sub summarise_instructions {
     my $self = shift;
     my $temp = shift;
-    my @items = ref $_[0] eq 'ARRAY' ? @$_[0] : @_;
+    my @items = ( ref $_[0] eq 'ARRAY' ? @{$_[0]} : @_ );
     
-    my $total_mins = List::Util::sum( map { $_->{adjusted_time} } @items );
+    my $total_mins = List::Util::sum(
+        map { $_->{time_until_next} // $_->{adjusted_time} } @items 
+    );
     my @instructions;
     push @instructions, "Warm oven up to $temp degrees.";
     push @instructions, "Cooking the whole meal will take $total_mins minutes.";
 
     for my $item (@items) {
         push @instructions, sprintf "Add %s and cook for %d minutes",
-            @$item{qw(name time_until_next)};
+            $item->{name}, $item->{time_until_next} || $item->{adjusted_time};
     }
     
     return wantarray ? @instructions : join "\n", @instructions;
