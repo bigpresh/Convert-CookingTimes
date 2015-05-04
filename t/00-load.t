@@ -4,7 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 use Test::More;
 
-plan tests => 3;
+plan tests => 4;
 
 BEGIN {
     use_ok( 'Convert::CookingTimes' ) || print "Bail out!\n";
@@ -31,6 +31,19 @@ is_deeply($steps,
     ],
     "Got expected steps correctly",
 );
+
+my $instructions = Convert::CookingTimes->summarise_instructions(
+    ( Convert::CookingTimes->adjust_times(@items) )
+);
+
+my $expect_instructions = join "\n",
+    "Warm oven up to 200 degrees.",
+    "Cooking the whole meal will take 30 minutes.",
+    "Add Chicken breasts and cook for 2 minutes",
+    "Add Oven chips and cook for 14 minutes",
+    "Add Roast veg and cook for 14 minutes";
+
+is($instructions, $expect_instructions, "Text instructions as expected");
 
 done_testing;
 
