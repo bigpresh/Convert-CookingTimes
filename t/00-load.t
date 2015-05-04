@@ -25,9 +25,9 @@ is($temp, 200, "Suggested cooking temp averaged out correctly");
 
 is_deeply($steps,
     [
-        { adjusted_time => 30, name => "Chicken breasts", time_until_next => 2.5 },
-        { adjusted_time => 27.5, name => "Oven chips", time_until_next => 13.1 },
-        { adjusted_time => 14.4, name => "Roast veg" },
+        { adjusted_time => 30, name => "Chicken breasts", time_until_next => 2 },
+        { adjusted_time => 28, name => "Oven chips", time_until_next => 14 },
+        { adjusted_time => 14, name => "Roast veg" },
     ],
     "Got expected steps correctly",
 );

@@ -97,7 +97,9 @@ sub adjust_times {
     for my $item (@items) {
         push @times, {
             name => $item->{name},
-            adjusted_time => ($item->{temp} * $item->{time}) / $desired_temp,
+            adjusted_time => Math::Round::round(
+                ($item->{temp} * $item->{time}) / $desired_temp
+            ),
         };
     }
 
