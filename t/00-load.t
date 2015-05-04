@@ -4,11 +4,8 @@ use strict;
 use warnings FATAL => 'all';
 use Test::More;
 
-plan tests => 4;
-
-BEGIN {
-    use_ok( 'Convert::CookingTimes' ) || print "Bail out!\n";
-}
+use Convert::CookingTimes;
+plan tests => 3;
 
 diag( "Testing Convert::CookingTimes $Convert::CookingTimes::VERSION, Perl $], $^X" );
 
@@ -33,7 +30,7 @@ is_deeply($steps,
 );
 
 my $instructions = Convert::CookingTimes->summarise_instructions(
-    ( Convert::CookingTimes->adjust_times(@items) )
+    Convert::CookingTimes->adjust_times(@items)
 );
 
 my $expect_instructions = join "\n",
