@@ -24,4 +24,14 @@ WriteMakefile(
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Convert-CookingTimes-*' },
+
+    META_MERGE => {
+        "meta-spec" => { version => 2 },
+        resources => {
+            repository => 'https://github.com/bigpresh/Convert-CookingTimes',
+            bugtracker => 'https://github.com/bigpresh/Convert-CookingTimes/issues',
+            homepage   => 'https://github.com/bigpresh/Convert-CookingTimes/',
+        },
+    },
+
 );
