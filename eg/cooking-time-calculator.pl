@@ -43,8 +43,8 @@ for my $num (1..10) {
     print <<ROW;
 <tr>
 <td><input type="text" name="name$num"></td>
-<td><input type="text" name="time$num"></td>
-<td><input type="text" name="temp$num"></td>
+<td><input type="number" name="time$num"></td>
+<td><input type="number" name="temp$num"></td>
 </tr>
 ROW
 }
