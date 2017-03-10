@@ -19,6 +19,7 @@ WriteMakefile(
     },
     PREREQ_PM => {
         'List::Util' => 0,
+        'Lingua::Conjunction' => 0,
         'Math::Round' => 0,
 
     },
