@@ -4,6 +4,7 @@ use 5.006;
 use strict;
 use warnings FATAL => 'all';
 
+use Lingua::Conjunction;
 use List::Util;
 use Math::Round;
 
@@ -92,10 +93,16 @@ sub adjust_times {
         List::Util::sum(map { $_->{temp} } @items) / scalar @items
     );
 
-    # Now, for each item, work out its adjusted time and add to the output list:
+    # Now, for each item, work out its adjusted time; group items by
+    # adjusted_time, so if we have multiple items with the same time
+    # requirement, they are merged (as they'll go in together)
+    my %items_by_time;
     my @times;
     for my $item (@items) {
-        push @times, {
+        my $adjusted_time = Math::Round::round(
+            ($item->{temp} * $item->{time}) / $desired_temp
+        );
+        push @{ $items_by_time{$adjusted_time} }, {
             name => $item->{name},
             adjusted_time => Math::Round::round(
                 ($item->{temp} * $item->{time}) / $desired_temp
@@ -103,15 +110,28 @@ sub adjust_times {
         };
     }
 
+
     # Finally, return the items, sorted by longest cooking duration first,
     # with the time until the next item should be started included
     my @output;
     @times = sort { $b->{adjusted_time} <=> $a->{adjusted_time} } @times;
-    while (my $item = shift @times) {
-        if (my $next_item = $times[0]) {
-            $item->{time_until_next} = $item->{adjusted_time} - $next_item->{adjusted_time};
+
+    for my $time (reverse sort keys %items_by_time) {
+        my @items = @{ $items_by_time{$time} };
+        my $condensed_item = {
+            name => conjunction(map { $_->{name} } @items),
+            adjusted_time => $items[0]->{adjusted_time},
+        };
+        
+        # Add time_until_next, if there are other items to come - find the next
+        # item(s) by looking for the first time that's shorter than this one:
+        my ($next_time) = grep { $_ < $time } reverse sort keys %items_by_time;
+        if ($next_time) {
+            $condensed_item->{time_until_next} 
+                = $condensed_item->{adjusted_time}
+                - $items_by_time{$next_time}[0]{adjusted_time};
         }
-        push @output, $item;
+        push @output, $condensed_item;
     }
     
     return $desired_temp, \@output;    

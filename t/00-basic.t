@@ -5,7 +5,7 @@ use warnings FATAL => 'all';
 use Test::More;
 
 use Convert::CookingTimes;
-plan tests => 3;
+plan tests => 4;
 
 diag( "Testing Convert::CookingTimes $Convert::CookingTimes::VERSION, Perl $], $^X" );
 
@@ -41,6 +41,23 @@ my $expect_instructions = join "\n",
     "Add Roast veg and cook for 14 minutes";
 
 is($instructions, $expect_instructions, "Text instructions as expected");
+
+# If multiple items require the same time, they're combined
+@items = (
+    { name => 'Foo', temp => 200, time => 10, },
+    { name => 'Bar', temp => 200, time => 15, },
+    { name => 'Baz', temp => 200, time => 10, },
+);
+($temp, $steps) = Convert::CookingTimes->adjust_times(@items);
+
+is_deeply($steps,
+    [
+        { adjusted_time => 15, name => 'Bar', time_until_next => 5, },
+        { adjusted_time => 10, name => "Foo and Baz",},
+    ]
+);
+
+
 
 done_testing;
 
