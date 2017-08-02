@@ -116,7 +116,7 @@ sub adjust_times {
     my @output;
     @times = sort { $b->{adjusted_time} <=> $a->{adjusted_time} } @times;
 
-    for my $time (reverse sort keys %items_by_time) {
+    for my $time (sort { $b <=> $a } keys %items_by_time) {
         my @items = @{ $items_by_time{$time} };
         my $condensed_item = {
             name => conjunction(map { $_->{name} } @items),
