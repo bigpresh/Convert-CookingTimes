@@ -125,7 +125,9 @@ sub adjust_times {
         
         # Add time_until_next, if there are other items to come - find the next
         # item(s) by looking for the first time that's shorter than this one:
-        my ($next_time) = grep { $_ < $time } reverse sort keys %items_by_time;
+        my ($next_time) = grep { 
+            $_ < $time 
+        } sort { $b <=> $a} keys %items_by_time;
         if ($next_time) {
             $condensed_item->{time_until_next} 
                 = $condensed_item->{adjusted_time}
